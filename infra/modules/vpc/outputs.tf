@@ -5,3 +5,8 @@ output "vpc_id" {
 output "private_subnet_ids" {
     value = [for subnet in aws_subnet.private : subnet.id]
 }
+
+output "vpc_cidr" {
+    value = aws_vpc.main.cidr_block
+  
+}
