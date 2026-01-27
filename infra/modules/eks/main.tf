@@ -1,10 +1,6 @@
 resource "aws_eks_cluster" "eks_cluster" {
   name = "eks-v3-cluster"
 
-  access_config {
-    authentication_mode = "API"
-  }
-
   role_arn = aws_iam_role.cluster.arn
   version  = "1.31"
 
@@ -41,6 +37,12 @@ resource "aws_iam_role" "cluster" {
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSVPCResourceController" {
+  role       = aws_iam_role.cluster.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+
 }
 
 resource "aws_eks_node_group" "workers" {
@@ -134,4 +136,23 @@ resource "aws_security_group_rule" "cluster_to_worker" {
   protocol          = "tcp"
   cidr_blocks       = [var.vpc_cidr]
   security_group_id = aws_security_group.cluster_sg.id
+}
+
+// PERMISSION ISSUES DONT HAVE ADMIN ACCESS
+
+resource "aws_eks_access_entry" "ayub_admin" {
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = "arn:aws:iam::940622738555:user/ayub"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "ayub_admin" {
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = aws_eks_access_entry.ayub_admin.principal_arn
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
 }
