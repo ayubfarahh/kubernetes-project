@@ -1,6 +1,5 @@
 resource "aws_eks_cluster" "eks_cluster" {
   name = "eks-v3-cluster"
-
   role_arn = aws_iam_role.cluster.arn
   version  = "1.31"
 
@@ -51,6 +50,9 @@ resource "aws_eks_node_group" "workers" {
   node_role_arn   = aws_iam_role.worker_permissions.arn
   instance_types = ["t3.medium"]
   subnet_ids      = var.private_subnet_ids
+  remote_access {
+    source_security_group_ids = [aws_security_group.worker_sg.id]
+  }
   scaling_config {
     desired_size = 1
     max_size     = 2
@@ -135,7 +137,8 @@ resource "aws_security_group_rule" "cluster_to_worker" {
   to_port           = 10250
   protocol          = "tcp"
   cidr_blocks       = [var.vpc_cidr]
-  security_group_id = aws_security_group.cluster_sg.id
+  security_group_id = aws_security_group.worker_sg.id
+  source_security_group_id = aws_security_group.cluster_sg.id
 }
 
 // PERMISSION ISSUES DONT HAVE ADMIN ACCESS
