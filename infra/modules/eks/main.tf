@@ -50,9 +50,7 @@ resource "aws_eks_node_group" "workers" {
   node_role_arn   = aws_iam_role.worker_permissions.arn
   instance_types = ["t3.medium"]
   subnet_ids      = var.private_subnet_ids
-  remote_access {
-    source_security_group_ids = [aws_security_group.worker_sg.id]
-  }
+  
   scaling_config {
     desired_size = 1
     max_size     = 2
@@ -136,26 +134,25 @@ resource "aws_security_group_rule" "cluster_to_worker" {
   from_port         = 10250
   to_port           = 10250
   protocol          = "tcp"
-  cidr_blocks       = [var.vpc_cidr]
   security_group_id = aws_security_group.worker_sg.id
   source_security_group_id = aws_security_group.cluster_sg.id
 }
 
 // PERMISSION ISSUES DONT HAVE ADMIN ACCESS
 
-resource "aws_eks_access_entry" "ayub_admin" {
-  cluster_name  = aws_eks_cluster.eks_cluster.name
-  principal_arn = "arn:aws:iam::940622738555:user/ayub"
-  type          = "STANDARD"
-}
+# resource "aws_eks_access_entry" "ayub_admin" {
+#   cluster_name  = aws_eks_cluster.eks_cluster.name
+#   principal_arn = "arn:aws:iam::940622738555:user/ayub"
+#   type          = "STANDARD"
+# }
 
-resource "aws_eks_access_policy_association" "ayub_admin" {
-  cluster_name  = aws_eks_cluster.eks_cluster.name
-  principal_arn = aws_eks_access_entry.ayub_admin.principal_arn
+# resource "aws_eks_access_policy_association" "ayub_admin" {
+#   cluster_name  = aws_eks_cluster.eks_cluster.name
+#   principal_arn = aws_eks_access_entry.ayub_admin.principal_arn
 
-  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+#   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
-  access_scope {
-    type = "cluster"
-  }
-}
+#   access_scope {
+#     type = "cluster"
+#   }
+# }

@@ -1,9 +1,10 @@
 repositories:
 - name: external-dns
-  url: https://charts.bitnami.com/bitnami
+  url: https://kubernetes-sigs.github.io/external-dns/
 
 releases:
 - name: external-dns
   namespace: external-dns
   chart: external-dns/external-dns
-  version: 9.0.3
+  version: v1.20.0
+
