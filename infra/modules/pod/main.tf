@@ -4,14 +4,21 @@ module "external_dns_pod_identity" {
   name = "external-dns"
 
   attach_external_dns_policy    = true
-  external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/IClearlyMadeThisUp"]
+  external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/Z0705516CKV60PQH3XUN"]
 
   associations = {
     this = {
       cluster_name    = var.eks_cluster_name
       namespace       = "external-dns"
       service_account = "external-dns-sa"
+      
     }
   }
 
+}
+
+resource "aws_eks_addon" "pod_identity_agent" {
+  cluster_name                = var.eks_cluster_name
+  addon_name                  = "eks-pod-identity-agent"
+  
 }
