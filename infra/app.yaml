@@ -41,8 +41,14 @@ metadata:
   name: game-ingress
   annotations:
     external-dns.alpha.kubernetes.io/hostname: eks.ayubs.uk
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    acme.cert-manager.io/http01-ingress-class: traefik
 spec:
   ingressClassName: traefik
+  tls:
+  - hosts:
+    - eks.ayubs.uk
+    secretName: secret-storage-key-for-tls-cert
   rules:
   - host: eks.ayubs.uk
     http:
