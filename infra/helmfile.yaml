@@ -14,13 +14,17 @@ releases:
   version: v1.20.0
   values:
   - serviceAccount:
-      create: true
+      create: false
       name: external-dns-sa
+    sources:
+    - ingress
     provider: aws
     aws:
       region: eu-west-2
     domainFilters:
     - ayubs.uk
+    registry: txt
+    txtOwnerId: eks-v3
 
 - name: cert-manager
   namespace: cert-manager
