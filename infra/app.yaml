@@ -19,6 +19,13 @@ spec:
         image: 940622738555.dkr.ecr.eu-west-2.amazonaws.com/eks-v3:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
 
 ---
 apiVersion: v1
